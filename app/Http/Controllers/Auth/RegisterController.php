@@ -74,7 +74,7 @@ class RegisterController extends Controller
             'password' => Hash::make($data['password']),
         ]);
 
-        Avatar::create($data['username'])->save(storage_path('app/public/avatars/' . $user->id . '.png'));
+        Avatar::create($data['username'])->save(storage_path('app/public/avatar-' . $user->id . '.png'));
 
         Auth::login($user);
 
