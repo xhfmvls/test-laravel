@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 use Auth;
+use Illuminate\Support\Facades\Storage;
 
 use Laravolt\Avatar\Facade as Avatar;
 
@@ -74,10 +75,22 @@ class RegisterController extends Controller
             'password' => Hash::make($data['password']),
         ]);
 
+        
+
+        // creates user avatar and save to local storage
         Avatar::create($data['username'])->save(storage_path('app/public/avatar-' . $user->id . '.png'));
 
-        Auth::login($user);
+        // checks if filesystem disk is s3
+        if (env('FILESYSTEM_DISK') == 's3'){
+            // get user avatar from storage path and insert to s3
+            $contents = Storage::disk('local')->get('public/avatar-' . $user->id . '.png');
+            Storage::put('public/avatar-' . $user->id . '.png', $contents);
+            
+            // deletes user avatar from local storage
+            Storage::disk('local')->delete('public/avatar-' . $user->id . '.png');
+        }
 
+        Auth::login($user);
         return $user;
     }
 }
