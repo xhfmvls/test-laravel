@@ -17,25 +17,7 @@ class UserController extends Controller
 
         $user = User::find($userId);
 
-        if (env('FILESYSTEM_DISK') == 's3'){
-            if(Storage::disk('s3')->exists('public/avatar-' . $user->id . '.png')) {
-                $avatarUrl = Storage::temporaryUrl(
-                    'public/avatar-' . $user->id . '.png', now()->addMinutes(5)
-                );
-            } else {
-                $path = public_path();
-                $avatarUrl = "/img/default.png";
-            }
-        }
-
-        if(env('FILESYSTEM_DISK') == 'local') {
-            if(Storage::disk('local')->exists('public/avatar-' . $user->id . '.png')) {
-                $avatarUrl = Storage::url('public/avatar-' . $user->id . '.png');
-            } else {
-                $path = public_path();
-                $avatarUrl = "/img/default.png";
-            }
-        }
+        $avatarUrl = $this->getUserAvatar($userId);
 
         return view('profile', ['user' => Auth::user(), 'avatarUrl' => $avatarUrl]);
     }
