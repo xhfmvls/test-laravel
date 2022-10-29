@@ -15,6 +15,7 @@
                         @endif
 
                         @foreach ($Posts as $post)
+                            <img src="{{ $post->user->avatarUrl }}" alt="" width="48px" height="48px">
                             {{ $post->user->username }}
                             <br>
                             {{ $post->text }}

@@ -49,7 +49,7 @@ class RegisterController extends Controller
     /**
      * Get a validator for an incoming registration request.
      *
-     * @param  array  $data
+     * @param array $data
      * @return \Illuminate\Contracts\Validation\Validator
      */
     protected function validator(array $data)
@@ -64,7 +64,7 @@ class RegisterController extends Controller
     /**
      * Create a new user instance after a valid registration.
      *
-     * @param  array  $data
+     * @param array $data
      * @return \App\Models\User
      */
     protected function create(array $data)
@@ -75,17 +75,15 @@ class RegisterController extends Controller
             'password' => Hash::make($data['password']),
         ]);
 
-        
-
         // creates user avatar and save to local storage
         Avatar::create($data['username'])->save(storage_path('app/public/avatar-' . $user->id . '.png'));
 
         // checks if filesystem disk is s3
-        if (env('FILESYSTEM_DISK') == 's3'){
+        if (env('FILESYSTEM_DISK') == 's3') {
             // get user avatar from storage path and insert to s3
             $contents = Storage::disk('local')->get('public/avatar-' . $user->id . '.png');
             Storage::put('public/avatar-' . $user->id . '.png', $contents);
-            
+
             // deletes user avatar from local storage
             Storage::disk('local')->delete('public/avatar-' . $user->id . '.png');
         }

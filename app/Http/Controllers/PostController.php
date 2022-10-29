@@ -17,7 +17,13 @@ class PostController extends Controller
      */
     public function index() {
         $posts = Post::orderByDesc('created_at')->paginate(10);
+
+        foreach ($posts as $post) {
+            $post->user->avatarUrl = $this->getUserAvatar($post->user->id);
+        }
+
         return view('home', ['Posts'=>$posts]);
+
     }
 
     /**
